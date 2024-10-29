@@ -9,7 +9,6 @@ export type UsersDocument = HydratedDocument<Userz>;
   timestamps: true,
 })
 export class Userz {
-
   @Prop({ trim: true })
   name?: string;
 

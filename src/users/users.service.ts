@@ -63,7 +63,34 @@ export class UsersService {
     return await this.usersModel.create(data);
   }
 
-  async _get() {}
+  async _get(id, query = {}) {
+    const filters = assignFilters({}, query, FILTERS, {});
+    const searchQuery = rawQuery(query);
+
+    // @ts-ignore
+    searchQuery._id = id;
+    let q = this.usersModel.findOne(searchQuery);
+    console.log({ searchQuery, filters });
+    // Handle $populate
+    if (filters.$populate) {
+      q = q.populate(filters.$populate);
+    }
+
+    // Handle $select
+    if (filters.$select && filters.$select.length) {
+      const fields = { _id: 1 };
+
+      for (const key of filters.$select) {
+        fields[key] = 1;
+      }
+      q.select(fields);
+    } else if (filters.$select && typeof filters.$select === 'object') {
+      q.select(filters.$select);
+    }
+
+    return await q.exec();
+  }
+
   async _patch() {}
   async _remove() {}
 }
