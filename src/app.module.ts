@@ -8,10 +8,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://root:root@cluster0.hnyq3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+    MongooseModule.forRoot(
+      'mongodb+srv://root:root@cluster0.hnyq3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    ),
     UsersModule,
     OrganizationModule,
-    LocationModule
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

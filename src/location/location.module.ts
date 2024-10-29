@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Location.name, schema: LocationSchema }]),
+    MongooseModule.forFeature([
+      { name: Location.name, schema: LocationSchema },
+    ]),
   ],
   controllers: [LocationController],
-  providers: [LocationService]
+  providers: [LocationService],
 })
 export class LocationModule {}

@@ -21,11 +21,11 @@ export class Users {
   @Prop({ trim: true })
   name?: string;
 
-  @Prop({ 
+  @Prop({
     type: Types.ObjectId,
     ref: Organization.name,
-   })
-  organization?:  Types.ObjectId;
+  })
+  organization?: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,

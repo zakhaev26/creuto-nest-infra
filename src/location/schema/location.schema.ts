@@ -1,4 +1,3 @@
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
@@ -11,10 +10,10 @@ export class Location {
   @Prop({ trim: true })
   name?: string;
 
-  @Prop({ type:Number })
+  @Prop({ type: Number })
   x?: number;
 
-  @Prop({ type:Number })
+  @Prop({ type: Number })
   y?: number;
 }
 

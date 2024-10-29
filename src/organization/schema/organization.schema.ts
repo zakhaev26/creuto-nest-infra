@@ -13,7 +13,7 @@ export class Organization {
 
   @Prop({
     type: Types.ObjectId,
-    ref: Location.name
+    ref: Location.name,
   })
   location: Types.ObjectId;
 }
