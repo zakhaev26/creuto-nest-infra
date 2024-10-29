@@ -32,7 +32,7 @@ export class UsersController {
   }
 
   @Patch('/:id?')
-  async patchOne(
+  async patch(
     @Query() query,
     @Body() patchUsersDto: Partial<Userz>,
     @Param('id') id,
@@ -41,7 +41,7 @@ export class UsersController {
     return await this.userService._patch(id, patchUsersDto, query);
   }
 
-  @Delete('/:id')
+  @Delete('/:id?')
   async delete(@Query() query, @Body() deleteDto: Partial<Userz>){
     // return await this.userService._remove(id,query);
   }
