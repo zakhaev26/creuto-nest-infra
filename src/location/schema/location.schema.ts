@@ -10,6 +10,12 @@ export class Location {
   @Prop({ trim: true })
   name?: string;
 
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'organization',
+  })
+  organization?: Types.ObjectId;
+
   @Prop({ type: Number })
   x?: number;
 

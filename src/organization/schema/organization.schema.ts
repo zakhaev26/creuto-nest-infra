@@ -10,7 +10,7 @@ export type OrganizationDocument = HydratedDocument<Organization>;
 export class Organization {
   @Prop({ trim: true })
   name?: string;
-
+  
   @Prop({
     type: Types.ObjectId,
     ref: Location.name,
