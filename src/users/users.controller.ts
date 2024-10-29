@@ -7,8 +7,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { Userz } from './schema/users.schema';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -34,10 +34,13 @@ export class UsersController {
   }
 
   @Patch()
-  async patchMany(
-    @Query() query,
-    @Body() patchUsersDto: Partial<Userz>,
-  ){
-    return await this.userService._patch(null, patchUsersDto, query)
+  async patchMany(@Query() query, @Body() patchUsersDto: Partial<Userz>) {
+    return await this.userService._patch(null, patchUsersDto, query);
+  }
+
+  @Get(':id')
+  async get(@Query() query, @Param('id') id: string) {
+    console.log(id);
+    return await this.userService._get(id, query);
   }
 }

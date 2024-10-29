@@ -63,24 +63,22 @@ export class UsersService {
     return await this.usersModel.create(data);
   }
 
-  async _get() {}
-
   async _patch(id: string | null, patchUserDto: Partial<Userz>, query = {}) {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery = id ? { _id: id, ...rawQuery(query) } : rawQuery(query);
-  
+
     // Check if this is a single update or batch update
     const isSingleUpdate = Boolean(id);
     let q;
-  
+
     if (isSingleUpdate) {
       q = this.usersModel.findOneAndUpdate(searchQuery, patchUserDto, {
-        new: true, 
+        new: true,
       });
     } else {
       q = this.usersModel.updateMany(searchQuery, patchUserDto);
     }
-  
+
     if (isSingleUpdate) {
       // Managing $select
       if (Array.isArray(filters.$select)) {
@@ -99,33 +97,60 @@ export class UsersService {
       ) {
         q.select(filters.$select);
       }
-  
+
       // Managing $sort
       if (filters.$sort) {
         q.sort(filters.$sort);
       }
-  
+
       // Managing $limit
       if (typeof filters.$limit !== 'undefined') {
         q.limit(filters.$limit);
       }
-  
+
       // Managing $skip
       if (filters.$skip) {
         q.skip(filters.$skip);
       }
-  
+
       // Managing $populate
       if (filters.$populate) {
         q.populate(filters.$populate);
       }
     }
-  
+
     // Execute the query and return the result
     return await q.exec();
   }
-  
-  
+
+  async _get(id, query = {}) {
+    const filters = assignFilters({}, query, FILTERS, {});
+    const searchQuery = rawQuery(query);
+
+    // @ts-ignore
+    searchQuery._id = id;
+    let q = this.usersModel.findOne(searchQuery);
+    console.log({ searchQuery, filters });
+    // Handle $populate
+    if (filters.$populate) {
+      q = q.populate(filters.$populate);
+    }
+
+    // Handle $select
+    if (filters.$select && filters.$select.length) {
+      const fields = { _id: 1 };
+
+      for (const key of filters.$select) {
+        fields[key] = 1;
+      }
+      q.select(fields);
+    } else if (filters.$select && typeof filters.$select === 'object') {
+      q.select(filters.$select);
+    }
+
+    return await q.exec();
+  }
+
   async _remove() {}
 }
 
