@@ -11,7 +11,7 @@ export class UsersService {
     private readonly usersModel: Model<Userz>,
   ) {}
 
-  async _find(query = {}) :Promise<any> {
+  async _find(query = {}): Promise<any> {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery = rawQuery(query);
 
@@ -130,7 +130,7 @@ export class UsersService {
     // @ts-ignore
     searchQuery._id = id;
     let q = this.usersModel.findOne(searchQuery);
-    
+
     // Handle $populate
     if (filters.$populate) {
       q = q.populate(filters.$populate);
@@ -152,15 +152,17 @@ export class UsersService {
     return q.exec();
   }
 
-  async _remove() {}
-}
+  async _remove(id: string | null, query = {}): Promise<any> {
+    const searchQuery = id ? { _id: id, ...rawQuery(query) } : rawQuery(query);
 
-/**
- * case 1: if !id && !query- change all entites as patchUserDto
- * case 2: id query- single entity update, all $ queries
- * case 3: !id query- fetch all for queries and update
- *
- * /user/:id
- * func param- query = {},
- *
- */
+    const data = await this._get(id, query);
+
+    if (id) {
+      await this.usersModel.deleteOne(searchQuery).exec();
+    } else {
+      await this.usersModel.deleteMany(searchQuery).exec();
+    }
+
+    return data;
+  }
+}

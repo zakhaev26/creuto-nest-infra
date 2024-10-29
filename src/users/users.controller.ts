@@ -27,8 +27,8 @@ export class UsersController {
   }
 
   @Post()
-  async create(@Body() createOrgDto) {
-    return await this.userService._create(createOrgDto);
+  async create(@Body() createUsersDto) {
+    return await this.userService._create(createUsersDto);
   }
 
   @Patch('/:id?')
@@ -42,8 +42,7 @@ export class UsersController {
   }
 
   @Delete('/:id?')
-  async delete(@Query() query, @Body() deleteDto: Partial<Userz>){
-    // return await this.userService._remove(id,query);
+  async delete(@Param('id') id, @Query() query) {
+    return await this.userService._remove(id, query);
   }
-
 }
