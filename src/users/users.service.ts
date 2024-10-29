@@ -64,6 +64,18 @@ export class UsersService {
   }
 
   async _get() {}
-  async _patch() {}
-  async _remove() {}
+  async _patch(id, patchUserDto, query = {}) {
+    /**
+     * case 1: if !id && !query- change all entites as patchUserDto
+     * case 2: id query- single entity update, all $ queries
+     * case 3: !id query- fetch all for queries and update
+     * 
+     * /user/:id 
+     * func param- query = {},
+     * 
+     */
+  }
+  async _remove() {
+    
+  }
 }
