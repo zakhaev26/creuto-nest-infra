@@ -3,20 +3,12 @@ import { HydratedDocument, Types } from 'mongoose';
 import { Location } from 'src/location/schema/location.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 
-export type UsersDocument = HydratedDocument<Users>;
+export type UsersDocument = HydratedDocument<Userz>;
 
 @Schema({
   timestamps: true,
 })
-export class Users {
-  @Prop({
-    unique: true,
-    lowercase: true,
-    sparse: true,
-    trim: true,
-    set: (value: string) => (value === '' ? null : value),
-  })
-  email: string;
+export class Userz {
 
   @Prop({ trim: true })
   name?: string;
@@ -34,4 +26,4 @@ export class Users {
   location: Types.ObjectId;
 }
 
-export const UsersSchema = SchemaFactory.createForClass(Users);
+export const UsersSchema = SchemaFactory.createForClass(Userz);
