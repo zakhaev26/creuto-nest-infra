@@ -11,7 +11,7 @@ export class UsersService {
     private readonly usersModel: Model<Userz>,
   ) {}
 
-  async _find(query = {}) {
+  async _find(query = {}) :Promise<any> {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery = rawQuery(query);
 
@@ -55,12 +55,12 @@ export class UsersService {
       q.populate(filters.$populate);
     }
 
-    return await q.exec();
+    return q.exec();
   }
 
   async _create(data) {
     /*v2 feature*/ const isMulti = false;
-    return await this.usersModel.create(data);
+    return this.usersModel.create(data);
   }
 
   async _patch(id: string | null, patchUserDto: Partial<Userz>, query = {}) {
@@ -120,7 +120,7 @@ export class UsersService {
     }
 
     // Execute the query and return the result
-    return await q.exec();
+    return q.exec();
   }
 
   async _get(id, query = {}) {
@@ -130,7 +130,7 @@ export class UsersService {
     // @ts-ignore
     searchQuery._id = id;
     let q = this.usersModel.findOne(searchQuery);
-    console.log({ searchQuery, filters });
+    
     // Handle $populate
     if (filters.$populate) {
       q = q.populate(filters.$populate);
@@ -143,12 +143,13 @@ export class UsersService {
       for (const key of filters.$select) {
         fields[key] = 1;
       }
+
       q.select(fields);
     } else if (filters.$select && typeof filters.$select === 'object') {
       q.select(filters.$select);
     }
 
-    return await q.exec();
+    return q.exec();
   }
 
   async _remove() {}

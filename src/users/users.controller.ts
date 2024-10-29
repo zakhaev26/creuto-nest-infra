@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -19,28 +20,30 @@ export class UsersController {
     return await this.userService._find(query);
   }
 
-  @Post()
-  async create(@Body() createOrgDto) {
-    return await this.userService._create(createOrgDto);
-  }
-
-  @Patch('/:id')
-  async patchOne(
-    @Query() query,
-    @Body() patchUsersDto: Partial<Userz>,
-    @Param('id') id,
-  ) {
-    return await this.userService._patch(id, patchUsersDto, query);
-  }
-
-  @Patch()
-  async patchMany(@Query() query, @Body() patchUsersDto: Partial<Userz>) {
-    return await this.userService._patch(null, patchUsersDto, query);
-  }
-
   @Get(':id')
   async get(@Query() query, @Param('id') id: string) {
     console.log(id);
     return await this.userService._get(id, query);
   }
+
+  @Post()
+  async create(@Body() createOrgDto) {
+    return await this.userService._create(createOrgDto);
+  }
+
+  @Patch('/:id?')
+  async patchOne(
+    @Query() query,
+    @Body() patchUsersDto: Partial<Userz>,
+    @Param('id') id,
+  ) {
+    console.log(id);
+    return await this.userService._patch(id, patchUsersDto, query);
+  }
+
+  @Delete('/:id')
+  async delete(@Query() query, @Body() deleteDto: Partial<Userz>){
+    // return await this.userService._remove(id,query);
+  }
+
 }
