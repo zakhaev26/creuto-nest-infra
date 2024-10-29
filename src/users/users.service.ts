@@ -64,18 +64,77 @@ export class UsersService {
   }
 
   async _get() {}
-  async _patch(id, patchUserDto, query = {}) {
-    /**
-     * case 1: if !id && !query- change all entites as patchUserDto
-     * case 2: id query- single entity update, all $ queries
-     * case 3: !id query- fetch all for queries and update
-     * 
-     * /user/:id 
-     * func param- query = {},
-     * 
-     */
+
+  async _patch(id: string | null, patchUserDto: Partial<Userz>, query = {}) {
+    const filters = assignFilters({}, query, FILTERS, {});
+    const searchQuery = id ? { _id: id, ...rawQuery(query) } : rawQuery(query);
+  
+    // Check if this is a single update or batch update
+    const isSingleUpdate = Boolean(id);
+    let q;
+  
+    if (isSingleUpdate) {
+      q = this.usersModel.findOneAndUpdate(searchQuery, patchUserDto, {
+        new: true, 
+      });
+    } else {
+      q = this.usersModel.updateMany(searchQuery, patchUserDto);
+    }
+  
+    if (isSingleUpdate) {
+      // Managing $select
+      if (Array.isArray(filters.$select)) {
+        q.select(
+          filters.$select.reduce(
+            (res, key) =>
+              Object.assign(res, {
+                [key]: 1,
+              }),
+            {},
+          ),
+        );
+      } else if (
+        typeof filters.$select === 'string' ||
+        typeof filters.$select === 'object'
+      ) {
+        q.select(filters.$select);
+      }
+  
+      // Managing $sort
+      if (filters.$sort) {
+        q.sort(filters.$sort);
+      }
+  
+      // Managing $limit
+      if (typeof filters.$limit !== 'undefined') {
+        q.limit(filters.$limit);
+      }
+  
+      // Managing $skip
+      if (filters.$skip) {
+        q.skip(filters.$skip);
+      }
+  
+      // Managing $populate
+      if (filters.$populate) {
+        q.populate(filters.$populate);
+      }
+    }
+  
+    // Execute the query and return the result
+    return await q.exec();
   }
-  async _remove() {
-    
-  }
+  
+  
+  async _remove() {}
 }
+
+/**
+ * case 1: if !id && !query- change all entites as patchUserDto
+ * case 2: id query- single entity update, all $ queries
+ * case 3: !id query- fetch all for queries and update
+ *
+ * /user/:id
+ * func param- query = {},
+ *
+ */

@@ -43,7 +43,7 @@ export const rawQuery = (query) => {
       }
     }
   }
-  console.log(rawQ)
+  // console.log(rawQ)
   return rawQ;
 };
 
