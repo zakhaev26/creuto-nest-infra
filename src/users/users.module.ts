@@ -9,6 +9,19 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forFeature([{ name: Userz.name, schema: UsersSchema }]),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [
+    UsersService,
+    {
+      provide: 'OPTIONS',
+      useFactory: () => ({
+        deleteKey: 'deleted',
+        defaultPagination: true,
+        defaultLimit: 20,
+        defaultSkip: 0,
+        multi: false,
+      }),
+    },
+  ],
+  exports: [UsersService],
 })
 export class UsersModule {}

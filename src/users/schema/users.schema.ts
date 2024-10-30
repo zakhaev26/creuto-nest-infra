@@ -3,7 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { Location } from 'src/location/schema/location.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 
-export type UsersDocument = HydratedDocument<Userz>;
+export type UserzDocument = HydratedDocument<Userz>;
 
 @Schema({
   timestamps: true,
