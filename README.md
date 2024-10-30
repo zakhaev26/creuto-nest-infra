@@ -1,9 +1,10 @@
-<p align='center'>
-  <!-- <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a> -->
-   <span style="display: block; margin-top: 10px; font-size: 24px; font-weight: bold;">Creuto NestJS Infrastructure</span>
-   <br/>
-  <img src="image.png" width="500" alt="Logo" style="display: block; margin: 0 auto;" />
-  <br/>
+<center>  
+  <h1>Creuto NestJS Infrastructure</h1>
+</center>
+
+
+<p align="center">  
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
 
