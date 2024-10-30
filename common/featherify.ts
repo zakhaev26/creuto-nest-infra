@@ -4,7 +4,8 @@ export function featherify(
   q,
   filters: Record<string, any>,
   options: { defaultLimit: number; defaultSkip: number; defaultPagination: boolean },
-  isSingleOperation = false
+  isSingleOperation = false,
+  isPaginationDisabled = false
 ) {
   
   // $select
@@ -20,7 +21,7 @@ export function featherify(
     q.populate(filters.$populate);
   }
 
-  if(!isSingleOperation) {
+  if(!isPaginationDisabled && !isSingleOperation) {
   // $sort
   if (filters.$sort) {
     q.sort(filters.$sort);

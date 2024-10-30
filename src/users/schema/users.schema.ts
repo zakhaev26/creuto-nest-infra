@@ -22,7 +22,7 @@ export class Userz {
     type: Types.ObjectId,
     ref: Location.name,
   })
-  location: Types.ObjectId;
+  location?: Types.ObjectId;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Userz);

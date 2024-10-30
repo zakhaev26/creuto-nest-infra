@@ -4,6 +4,9 @@ import { Model, Query, FilterQuery, UpdateQuery } from 'mongoose';
 import { assignFilters, FILTERS, rawQuery } from 'common/query.utils';
 import { Userz, UserzDocument } from './schema/users.schema';
 import { featherify } from 'common/featherify';
+import { PaginatedResponse } from 'types/PaginatedResponse';
+import { UpdateWriteOpResult } from 'mongoose';
+import { CreateUserDTO, PatchUserDTO } from './dto/user';
 
 interface Options {
   deleteKey: string;
@@ -20,12 +23,16 @@ export class UsersService {
     @Inject('OPTIONS') private readonly options: Options,
   ) {}
 
-  async _find(query: Record<string, any> = {}): Promise<any> {
+  async _find(
+    query: Record<string, any> = {},
+  ): Promise<PaginatedResponse<Userz>> {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery = rawQuery(query);
+    console.log(query)
+    const isPaginationDisabled = query.$paginate === false;
 
     let q = this.usersModel.find(searchQuery);
-    featherify(q, filters, this.options);
+    featherify(q, filters, this.options,isPaginationDisabled);
 
     const [data, total] = await Promise.all([
       q.exec(),
@@ -40,9 +47,7 @@ export class UsersService {
     };
   }
 
-  async _create(
-    data: Userz | Userz[],
-  ): Promise<Userz | Userz[]> {
+  async _create(data: CreateUserDTO): Promise<Userz | Userz[]> {
     const multi = this.options.multi;
 
     if (multi) {
@@ -64,9 +69,9 @@ export class UsersService {
 
   async _patch(
     id: string | null,
-    data: Partial<Userz>,
+    data: PatchUserDTO,
     query: Record<string, any> = {},
-  ) {
+  ): Promise<Userz | Userz[] | null> {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery: FilterQuery<UserzDocument> = id
       ? { _id: id, ...rawQuery(query) }
@@ -74,11 +79,19 @@ export class UsersService {
 
     const isSingleUpdate = Boolean(id);
     const q = this._getOrFind(isSingleUpdate, searchQuery, data);
-    if (isSingleUpdate) {
-      featherify(q, filters, this.options,isSingleUpdate);
-    }
 
-    return q.exec();
+    if (isSingleUpdate) {
+      featherify(q, filters, this.options, isSingleUpdate);
+      // @ts-expect-error
+      return q.exec();
+    }
+    const result = await q.exec();
+
+    // @ts-expect-error
+    if (result.modifiedCount > 0) {
+      return this.usersModel.find(searchQuery).exec();
+    }
+    return [];
   }
 
   async _get(
@@ -88,12 +101,12 @@ export class UsersService {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery: FilterQuery<UserzDocument> = {
       ...rawQuery(query),
-      _id: id
-    }
+      _id: id,
+    };
 
     let q = this.usersModel.findOne(searchQuery);
-    const isSingleOperation = true
-    featherify(q, filters, this.options,isSingleOperation);
+    const isSingleOperation = true;
+    featherify(q, filters, this.options, isSingleOperation);
 
     return q.exec();
   }
