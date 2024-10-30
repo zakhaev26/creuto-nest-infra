@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Location } from './schema/location.schema';
 import { Model } from 'mongoose';
-import { assignFilters, FILTERS, rawQuery } from 'common/query.utils';
+import { assignFilters, FILTERS, rawQuery } from 'src/common/query.utils';
 
 @Injectable()
 export class LocationService {

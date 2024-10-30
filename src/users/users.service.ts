@@ -1,20 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Query, FilterQuery, UpdateQuery } from 'mongoose';
-import { assignFilters, FILTERS, rawQuery } from 'common/query.utils';
+import { Model, FilterQuery, UpdateQuery } from 'mongoose';
+import { assignFilters, FILTERS, rawQuery } from 'src/common/query.utils';
 import { Userz, UserzDocument } from './schema/users.schema';
-import { featherify } from 'common/featherify';
 import { PaginatedResponse } from 'types/PaginatedResponse';
-import { UpdateWriteOpResult } from 'mongoose';
-import { CreateUserDTO, PatchUserDTO } from './dto/user';
-
-interface Options {
-  deleteKey: string;
-  defaultPagination: boolean;
-  defaultLimit: number;
-  defaultSkip: number;
-  multi: boolean;
-}
+import { CreateUserDTO, PatchUserDTO } from './dto/user.dto';
+import { Options } from 'types/Options';
+import { featherify } from 'src/common/featherify';
 
 @Injectable()
 export class UsersService {
@@ -25,14 +17,19 @@ export class UsersService {
 
   async _find(
     query: Record<string, any> = {},
-  ): Promise<PaginatedResponse<Userz>> {
+  ): Promise<PaginatedResponse<Userz> | Userz[]> {
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery = rawQuery(query);
-    console.log(query)
-    const isPaginationDisabled = query.$paginate === false;
+    console.log(query);
+    const isPaginationDisabled =
+      query.$paginate === false || query.$paginate === 'false';
 
     let q = this.usersModel.find(searchQuery);
-    featherify(q, filters, this.options,isPaginationDisabled);
+    featherify(q, filters, this.options, isPaginationDisabled);
+
+    if (isPaginationDisabled) {
+      return await q.exec();
+    }
 
     const [data, total] = await Promise.all([
       q.exec(),
@@ -56,15 +53,15 @@ export class UsersService {
           'Bulk creation requires an array of users.',
         );
       }
+      // @ts-expect-error
       return this.usersModel.insertMany(data);
-    } else {
-      if (Array.isArray(data)) {
-        throw new BadRequestException(
-          'Single creation expects a single user object, not an array.',
-        );
-      }
-      return this.usersModel.create(data);
     }
+    if (Array.isArray(data)) {
+      throw new BadRequestException(
+        'Single creation expects a single user object, not an array.',
+      );
+    }
+    return this.usersModel.create(data);
   }
 
   async _patch(

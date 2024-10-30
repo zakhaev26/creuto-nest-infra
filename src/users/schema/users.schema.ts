@@ -23,6 +23,25 @@ export class Userz {
     ref: Location.name,
   })
   location?: Types.ObjectId;
+
+  @Prop({ default: false })
+  deleted: boolean;
+
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: Userz.name,
+  })
+  createdBy: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: Userz.name,
+  })
+  deletedBy: Types.ObjectId;
+
+  @Prop()
+  deletedAt: Date;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Userz);

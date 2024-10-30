@@ -8,9 +8,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Userz } from './schema/users.schema';
 import { UsersService } from './users.service';
-import { CreateUserDTO, PatchUserDTO } from './dto/user';
+import { CreateUserDTO, PatchUserDTO } from './dto/user.dto';
+import { ModifyBody, setCreatedBy } from 'src/decorators/modify-body.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -22,12 +22,14 @@ export class UsersController {
   }
 
   @Get(':id')
-  async get(@Query() query:unknown, @Param('id') id: string) {
+  async get(@Query() query: unknown, @Param('id') id: string) {
     return await this.userService._get(id, query);
   }
 
   @Post()
-  async create(@Body() createUsersDto: CreateUserDTO) {
+  async create(
+    @ModifyBody(setCreatedBy()) createUsersDto: CreateUserDTO
+  ) {
     return await this.userService._create(createUsersDto);
   }
 
